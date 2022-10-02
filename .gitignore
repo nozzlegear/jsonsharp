@@ -1,0 +1,7 @@
+.vim
+.idea
+obj
+bin
+packages
+paket-files
+*.DotSettings.user
