@@ -5,11 +5,21 @@ open System.Text.Json
 open JsonSharp
 open Xunit
 
-type TestUnion = 
-    | TestInt of int
-    | TestBool of bool
-    | TestString of string
-    | TestOther
+type Dog = 
+    { 
+        Name : string
+        Loyal : bool
+    }
+
+type Cat = 
+    {
+        Name : string
+        Lives : int
+    }
+
+type Animal = 
+    | Dog of Dog
+    | Cat of Cat
 
 [<Fact>]
 let ``Should parse json objects without throwing an exception`` () =
@@ -144,15 +154,27 @@ let ``Should throw an IndexOutOfRangeException for arrays`` () =
 [<Fact>]
 let ``Should parse an array of multiple value types into a union type`` () =
     let json = """
-        [1, true, "hello"]
+        [
+            {"type":"dog","name":"Mars","loyal":true},
+            {"type":"dog","name":"Juno","loyal":true},
+            {"type":"dog","name":"Hog","loyal":true},
+            {"type":"cat","name":"Puma","lives":9}
+        ]
 """
-    let reader = ElementReader.parse json
-    let data = reader.array (fun read -> 
-        match read.currentValueKind with
-        | JsonValueKind.True
-        | JsonValueKind.False -> TestBool (read.bool ())
-        | JsonValueKind.Number -> TestInt (read.int ())
-        | JsonValueKind.String -> TestString (read.string ())
-        | _ -> TestOther
+    let reader = JsonSharp.ElementReader.parse json
+
+    // Parse the json array into an array of Animal union types, deciding which animal type based on the "type" property
+    let animals = reader.array (fun read ->
+        if read.valueEquals("type", "dog") then
+            { Name = read.string "name"; Loyal = read.bool "loyal" }
+            |> Dog
+        else
+            { Name = read.string "name"; Lives = read.int "lives" }
+            |> Cat
     )
-    Assert.Equal([TestInt 1; TestBool true; TestString "hello"], data)
+    let expected = 
+        [ Dog ({ Name = "Mars"; Loyal = true })
+          Dog ({ Name = "Juno"; Loyal = true })
+          Dog ({ Name = "Hog" ; Loyal = true })
+          Cat ({ Name = "Puma"; Lives = 9    })]
+    Assert.Equal(expected, animals)
