@@ -3,8 +3,20 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyName>JsonSharp</AssemblyName>
+    <RootNamespace>JsonSharp</RootNamespace>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
-
+  <PropertyGroup>
+    <Description>JsonSharp is a small wrapper around the System.Text.Json `JsonElement` class. The goal is to provide a functional approach for parsing and reading individual JSON elements into classes, records or union types.</Description>
+    <Authors>Joshua Harms</Authors>
+    <Copyright>Copyright (c) Nozzlegear Software 2022</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/nozzlegear/shopifysharp</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/nozzlegear/shopifysharp</RepositoryUrl>
+    <PackageTags>json,parsing,deserializing,deserialization,fsharp,functional</PackageTags>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="ElementReader.fs" />
   </ItemGroup>
