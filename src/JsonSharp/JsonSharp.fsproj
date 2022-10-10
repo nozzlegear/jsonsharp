@@ -15,6 +15,7 @@
     <Authors>Joshua Harms</Authors>
     <Copyright>Copyright (c) Nozzlegear Software 2022</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/nozzlegear/shopifysharp</PackageProjectUrl>
     <RepositoryUrl>https://github.com/nozzlegear/shopifysharp</RepositoryUrl>
     <PackageTags>json,parsing,deserializing,deserialization,fsharp,functional</PackageTags>
@@ -25,6 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ElementReader.fs" />
+    <None Include="../../readme.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>
