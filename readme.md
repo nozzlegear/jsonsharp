@@ -1,5 +1,7 @@
 # JsonSharp
 
+[![Build/Test Pipeline](https://github.com/nozzlegear/jsonsharp/actions/workflows/ci.yml/badge.svg)](https://github.com/nozzlegear/jsonsharp/actions/workflows/ci.yml)
+
 JsonSharp is a small wrapper around the System.Text.Json `JsonElement` class. The goal is to provide a functional approach for parsing and reading individual JSON elements into classes, records or union types. 
 
 ```fs
