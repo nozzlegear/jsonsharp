@@ -20,12 +20,6 @@ jobs:
       VERSION_SUFFIX: "b${{ github.run_number }}"
 
     steps:
-    - name: Install fish
-      run: |
-        sudo apt-add-repository ppa:fish-shell/release-3 \
-        && sudo apt-get -qq update \
-        && sudo apt-get -qq install fish parallel
-
     - name: Checkout branch
       uses: actions/checkout@v3
 
@@ -35,8 +29,7 @@ jobs:
         dotnet-version: 6.0.x
 
     - name: Build and pack
-      run: dotnet build -c Release; and dotnet pack -c Release -o "./artifacts" --version-suffix "$VERSION_SUFFIX"
-      shell: fish
+      run: dotnet build -c Release && dotnet pack -c Release -o "./artifacts" --version-suffix "$VERSION_SUFFIX"
 
     - name: Execute unit test script
       run: dotnet test -c Release --logger "trx;LogFileName=Tests.trx" --results-directory "TestResults"
