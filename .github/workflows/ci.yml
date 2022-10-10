@@ -1,0 +1,64 @@
+name: Build/Test Pipeline
+
+on:
+  push:
+    branches: [ master, setup-github-actions ]
+
+# Cancel any in-progress build/test runs
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: "Build"
+    runs-on: ubuntu-20.04
+    environment: "Build Environment"
+    env:
+      # Version suffix begins with "b" for nuget packages
+      VERSION_SUFFIX: "b${{ github.run_number }}"
+
+    steps:
+    - name: Install fish
+      run: |
+        sudo apt-add-repository ppa:fish-shell/release-3 \
+        && sudo apt-get -qq update \
+        && sudo apt-get -qq install fish parallel
+
+    - name: Checkout branch
+      uses: actions/checkout@v3
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Build and pack
+      run: dotnet build -c Release; and dotnet pack -c Release -o "./artifacts" --version-suffix "$VERSION_SUFFIX"
+      shell: fish
+
+    - name: Execute unit test script
+      run: dotnet test -c Release --logger "trx;LogFileName=Tests.trx" --results-directory "TestResults"
+      shell: bash
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results
+        path: TestResults
+      # Use always() to always run this step to publish test results when there are test failures
+      if: ${{ always() }}
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: artifacts
+        if-no-files-found: error
+        path: |
+          ./artifacts/*.nupkg
+          ./artifacts/*.snupkg
+
+    - name: Publish package to Nuget
+      # Prerelease packages have a `-b*.nupkg` suffix
+      run: dotnet nuget push --skip-duplicate -k ${{ secrets.NUGET_TOKEN }} -s "https://api.nuget.org/v3/index.json" ./artifacts/*-b*.nupkg
