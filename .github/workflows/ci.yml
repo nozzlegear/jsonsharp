@@ -3,6 +3,7 @@ name: Build/Test Pipeline
 on:
   push:
     branches: [ master, setup-github-actions ]
+  workflow_dispatch:
 
 # Cancel any in-progress build/test runs
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
